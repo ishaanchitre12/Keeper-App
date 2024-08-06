@@ -1,21 +1,21 @@
-import express from "express";
-import cors from "cors";
-import pg from "pg";
-import env from "dotenv";
-import bodyParser from "body-parser";
+const express = require("express");
+const cors = require("cors");
+const db = require("./db");
+const path = require("path");
+const bodyParser = require("body-parser");
 
-const port = 4000;
+const port = process.env.PORT || 4000;
 const app = express();
 app.use(cors());
-env.config();
+app.use(express.static(path.join(__dirname, "client/build")));
+// process.env.PORT
+// process.env.NODE_ENV => production or undefined
+if (process.env.NODE_ENV === "production") {
+    // server static content
+    // npm run build
+    
+}
 
-const db = new pg.Client({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: process.env.PG_PORT
-});
 db.connect();
 
 app.use(bodyParser.json());
@@ -44,6 +44,10 @@ app.delete("/notes/:id", async (req, res) => {
     const {id} = req.params;
     const result = await db.query("DELETE FROM notes WHERE id = $1 RETURNING *", [id]);
     res.json(result.rows);
+})
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/build/index.html"));
 })
 
 app.listen(port, () => {

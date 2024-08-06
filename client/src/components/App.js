@@ -6,7 +6,13 @@ import Note from "./Note";
 import CreateArea from "./CreateArea";
 
 function App() {
-  const API_URL = "http://localhost:4000/notes";
+  // proxy is only used in development so it will be ignored in production
+  // so if there is no http://localhost:4000, by default it will use heroku domain
+  // remember this heroku app is just our server serving the build static content
+  // and also holding the restful API
+
+  // Heroku domain: https://pern-keeper-app.herokuapp.com/notes
+  const API_URL = "/notes";
   const [notes, setNotes] = useState([]);
   const [editingNote, setEditingNote] = useState(null);
 
